@@ -12,8 +12,8 @@ Route::prefix('/blog')->name('blog.')->group(function() {
     Route::get('/contact', [BlogController::class, 'contact'])->name('contact');
 });
 
-// Route::get('/form', [FormController::class], 'form1')->name('form1');
-// Route::post('/form', [FormController::class], 'form1_data')->name('form1_data');
+Route::get('form1', [FormController::class, 'form1'])->name('form1');
+Route::post('/form', [FormController::class, 'form1_data'])->name('form1_data');
 
 
 

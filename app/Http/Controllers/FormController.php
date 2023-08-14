@@ -10,12 +10,9 @@ class FormController extends Controller
         return view('forms.form1');
     }
 
-    // function form1_data(Request $request){
+    function form1_data(){
 
-    //     $email = $request->email;
-    //     $password = $request->password;
+        return 'Done';
 
-    //     return view('forms.form1', compact('name', 'age'));
-
-    // }
+    }
 }
