@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactUsMail;
+use App\Mail\TestMail;
 use Illuminate\Http\Request;
 use App\Rules\CheckWordsCount;
+use Illuminate\Support\Facades\Mail;
 
 class FormController extends Controller
 {
@@ -67,7 +70,6 @@ class FormController extends Controller
 
 
 
-
     function form3()
     {
         return view('forms.form3');
@@ -94,5 +96,65 @@ class FormController extends Controller
 
         ]);
         dd($request->all());
+    }
+
+
+
+
+    function form4()
+    {
+        return view('forms.form4');
+    }
+
+    function form4_data(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'image' => ['required']
+        ]);
+
+        // 'mimes:png', 'max:100',  'image',
+        $folderName = date('Y') . '/' . date('m') . '_' . date('M') . '_' . date('F');
+        foreach ($request->file('image') as  $image) {
+            // $ex = rand() . time() . $request->file('image')->getClientOriginalName();
+            $ex = $image->getClientOriginalExtension();
+            $image_name = rand() . time() . rand() . '_' . rand() . rand() . rand() . '_' . rand() . '.' . $ex;
+            $image->move(public_path('images/' . $folderName), $image_name);
+
+            dd($request->all());
+        }
+    }
+
+
+
+
+    function contact()
+    {
+        return view('forms.contact');
+    }
+
+    function contact_data(Request $request)
+    {
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'subject' => 'required',
+            'image' => 'nullable|image|mimes:png,jpg',
+            'message' => 'required',
+
+        ]);
+
+        $data = $request->except('_token', 'image'); //اشياء ما بدي ياها تظهر
+
+        if ($request->hasFile('image')) {
+            $image_name = rand() . time() . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('images'), $image_name);
+            $data['image'] = $image_name; //في حال رفعت صورة خليها تساوي الكلام هادا
+        }
+
+        // Mail::to('admin@admin.com')->send(new TestMail());
+        Mail::to('admin@admin.com')->send(new ContactUsMail($data));
     }
 }
