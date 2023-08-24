@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image');
-            $table->string('content');
+            $table->text('content');
             $table->double('price', 10, 3);
             $table->integer('hours');
             $table->boolean('status')->default(0);

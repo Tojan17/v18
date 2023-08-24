@@ -1,9 +1,10 @@
 <?php
 
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\FormController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CourseController;
 
 Route::prefix('/blog')->name('blog.')->group(function () {
     Route::get('/', [BlogController::class, 'index'])->name('index');
@@ -36,5 +37,32 @@ Route::post('/form4', [FormController::class, 'form4_data'])->name('form4_data')
 
 Route::get('/contact', [FormController::class, 'contact'])->name('contact');
 Route::post('/contact', [FormController::class, 'contact_data'])->name('contact_data');
+
+
+// Course All Routes
+
+//get all data
+
+// Route::get('courses', [CourseController::class, 'index'])->name('courses.index');
+// Route::get('courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+
+// //create routes
+// Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+// Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+
+
+// //update routes
+// Route::post('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+// Route::post(['put', 'patch'],'/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
+
+
+// //delete route
+// Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+
+ ///بدلا عن الروابط السابقة سنستخدم ما يلي
+
+Route::resource('courses', CourseController::class);
+
+
 
 //
