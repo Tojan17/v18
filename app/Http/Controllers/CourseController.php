@@ -18,12 +18,23 @@ class CourseController extends Controller
         $col = 'id';
         $type = 'asc';
 
-        if($request->has('column')){
+        if ($request->has('column')) {
             $col = $request->column;
+            if (!in_array($col, ['id', 'name', 'price', 'created_at'])) {
+                $col = 'id';
+            }
             $type = $request->type;
         }
 
-        $courses = Course::orderBy($col,$type)->paginate(10);
+        if ($request->has('q') && !empty($request->q)) {
+            $courses = Course::orderBy($col, $type)
+                ->where('name', 'like', '%' . $request->q . '%')
+                ->orWhere('price', 'like', '%' . $request->q . '%')
+                ->simplepaginate(10);
+        } else {
+            $courses = Course::orderBy($col, $type)->simplepaginate(10);
+        }
+
 
 
         return view('courses.index', compact('courses'));
@@ -72,8 +83,10 @@ class CourseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        Course::destroy($id);
+        return redirect()->route('courses.index');
+
     }
 }
