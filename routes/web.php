@@ -60,6 +60,11 @@ Route::post('/contact', [FormController::class, 'contact_data'])->name('contact_
 // Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
 
  ///بدلا عن الروابط السابقة سنستخدم ما يلي
+Route::get('/courses/trash', [CourseController::class, 'trash'])->name('courses.trash');
+
+Route::get('/courses/{course}/restore', [CourseController::class, 'restore'])->name('courses.restore');
+
+Route::delete('/courses/{course}/forcedelete', [CourseController::class, 'forcedelete'])->name('courses.forcedelete');
 
 Route::resource('courses', CourseController::class);
 

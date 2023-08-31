@@ -43,6 +43,14 @@
     <div class="container my-5">
         <h1 class="text-center mb-4">All Courses</h1>
 
+        <div class="d-flex justify-content-between">
+            <a href="{{ route('courses.trash') }}" class="btn btn-danger mb-3"><i class="fas fa-trash"></i> Trashed
+                Courses</a>
+
+            <a href="{{ route('courses.create') }}" class="btn btn-success mb-3"><i class="fas fa-plus"></i> Add new
+                Course</a>
+        </div>
+
         <form class="mx-2" action="{{ route('courses.index') }}" method="GET">
 
             @if (request()->has('page'))
@@ -55,6 +63,7 @@
                         value="{{ request()->q }}">
                     <i class="fas fa-search"></i>
                 </div>
+
                 <div class="col-3">
                     <div class="d-flex align-items-center mb-2">
                         <select name="column" class="form-select w-50">
@@ -70,14 +79,13 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="col-1">
                     <button class="btn btn-primary">Search</button>
                 </div>
             </div>
             {{-- btn-sm --}}
         </form>
-
-
 
         <table class="table table-bordered table-hover table-striped">
             <tr class="table-dark ">
@@ -93,9 +101,9 @@
             </tr>
 
             @foreach ($courses as $course)
-                <tr>
+            <tr>
                     <td>{{ $course->id }}</td>
-                    <td><img width="100" src="{{ $course->image }}" alt=""></td>
+                    <td><img width="100" src="{{ asset('images/'.$course->image) }}" alt=""></td>
                     <td>{{ $course->name }}</td>
                     <td>${{ $course->price }}</td>
                     <td>{{ $course->hours }}</td>
@@ -106,33 +114,24 @@
                     <td>{{ $course->updated_at->diffForHumans() }}</td>
                     <td>
                         <a class="btn btn-sm btn-primary" href="">
-                            <i class="fas fa-edit"></i></a>
+                            <i class="fas fa-edit"></i></a> {{-- edit --}}
                         {{-- <a class="btn btn-sm btn-danger" href="{{ route('courses.destroy', $course->id) }}"><i class="fas fa-trash"></i></a> --}}
                         <form class="d-inline" action="{{ route('courses.destroy', $course->id) }}" method="POST">
                             @csrf
                             @method('delete')
                             <button onclick="return confirm('Are yoy sure?!')" class="btn btn-sm btn-danger"><i
-                                    class="fas fa-trash"></i></button>
+                                    class="fas fa-trash"></i></button> {{-- trash --}}
                         </form>
                     </td>
-                </tr>
+            </tr>
             @endforeach
-
-
         </table>
 
         {{-- {{ $courses->links() }} --}}
         {{-- {{ $courses->appends(['moh' => 20])->links() }} --}}
         {{ $courses->appends($_GET)->links() }}
 
-
     </div>
-
-
-
-
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
