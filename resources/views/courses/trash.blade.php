@@ -17,6 +17,15 @@
     <div class="container my-5">
         <h1 class="text-center mb-4">Trashed Courses</h1>
 
+        @if (session('msg'))
+            <div class="alert alert-{{ session('type') }} alert-dismissible fade show"">
+                {{ session('msg') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+            </div>
+        @endif
+
+
         <a href="{{ route('courses.index') }}" class="btn btn-primary mb-3"><i class="fas fa-laptop"></i> All
             Courses</a>
 
@@ -60,7 +69,7 @@
                         <td>{{ $course->deleted_at->diffForHumans() }}</td>
                         <td>
                             <a class="btn btn-sm btn-primary" href="{{ route('courses.restore', $course->id) }}">
-                                <i class="fas fa-undo"></i></a> 
+                                <i class="fas fa-undo"></i></a>
 
                             <form class="d-inline" action="{{ route('courses.forcedelete', $course->id) }}"
                                 method="POST">
@@ -68,7 +77,7 @@
                                 @method('delete')
                                 <button onclick="return confirm('Are you sure, you can\'t rollback?!')"
                                     class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button>
-                                
+
                             </form>
                         </td>
                     </tr>
@@ -85,9 +94,20 @@
         {{-- {{ $courses->appends(['moh' => 20])->links() }} --}}
         {{ $courses->appends($_GET)->links() }}
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
-        </script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
+    </script>
+
+    <script>
+        if ($('.alert').length != 0) {
+            setTimeout(() => {
+                console.log("Done");
+                $('.alert').fadeOut();
+
+            }, 3000);
+        }
+    </script>
 </body>
 
 </html>

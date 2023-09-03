@@ -43,6 +43,14 @@
     <div class="container my-5">
         <h1 class="text-center mb-4">All Courses</h1>
 
+        @if (session('msg'))
+            <div class="alert alert-{{ session('type') }} alert-dismissible fade show"">
+                {{ session('msg') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+            </div>
+        @endif
+
         <div class="d-flex justify-content-between">
             <a href="{{ route('courses.trash') }}" class="btn btn-danger mb-3"><i class="fas fa-trash"></i> Trashed
                 Courses</a>
@@ -101,9 +109,9 @@
             </tr>
 
             @foreach ($courses as $course)
-            <tr>
+                <tr>
                     <td>{{ $course->id }}</td>
-                    <td><img width="100" src="{{ asset('images/'.$course->image) }}" alt=""></td>
+                    <td><img width="100" src="{{ asset('images/' . $course->image) }}" alt=""></td>
                     <td>{{ $course->name }}</td>
                     <td>${{ $course->price }}</td>
                     <td>{{ $course->hours }}</td>
@@ -113,17 +121,22 @@
                     <td>{{ $course->created_at->format('M d, Y') }}</td>
                     <td>{{ $course->updated_at->diffForHumans() }}</td>
                     <td>
-                        <a class="btn btn-sm btn-primary" href="">
+                        <a class="btn btn-sm btn-primary" href="{{ route('courses.edit', $course->id) }}">
                             <i class="fas fa-edit"></i></a> {{-- edit --}}
                         {{-- <a class="btn btn-sm btn-danger" href="{{ route('courses.destroy', $course->id) }}"><i class="fas fa-trash"></i></a> --}}
                         <form class="d-inline" action="{{ route('courses.destroy', $course->id) }}" method="POST">
                             @csrf
                             @method('delete')
-                            <button onclick="return confirm('Are yoy sure?!')" class="btn btn-sm btn-danger"><i
-                                    class="fas fa-trash"></i></button> {{-- trash --}}
+                            {{-- <button onclick="return confirm('Are yoy sure?!')" class="btn btn-sm btn-danger"><i
+                                    class="fas fa-trash"></i></button> --}}
+                            {{-- trash --}}
+
+                            <button type="button" onclick="deleteCourse(event)" class="btn btn-sm btn-danger"><i
+                                    class="fas fa-trash"></i></button>
+
                         </form>
                     </td>
-            </tr>
+                </tr>
             @endforeach
         </table>
 
@@ -133,8 +146,73 @@
 
     </div>
 
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    "></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
+    </script>
+
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+        @if (session('msg'))
+            Toast.fire({
+                icon: '{{ session('type') }}',
+                title: '{{ session('msg') }}'
+            })
+        @endif
+
+
+        if ($('.alert').length != 0) {
+            setTimeout(() => {
+                console.log("Done");
+                $('.alert').fadeOut();
+
+            }, 3000);
+        }
+    </script>
+
+    <script>
+        function deleteCourse(ev) {
+            // console.log(ev.target.parentElement);
+            // console.log(ev.target.closest('form'));
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Swal.fire(
+                    //     'Deleted!',
+                    //     'Your file has been deleted.',
+                    //     'success'
+                    // )
+                    ev.target.closest('form').submit();
+
+
+
+                }
+            })
+        }
     </script>
 </body>
 

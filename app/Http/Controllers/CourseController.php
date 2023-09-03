@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+
 
 class CourseController extends Controller
 {
@@ -68,13 +70,13 @@ class CourseController extends Controller
 
         //3. store in data base
         //1. Using Model Object
-        $course = new Course();
-        $course->name    = $request->name;
-        $course->image   = $img_name;
-        $course->content = $request->content;
-        $course->price   = $request->price;
-        $course->hours   = $request->hours;
-        $course->save();
+        // $course = new Course();
+        // $course->name    = $request->name;
+        // $course->image   = $img_name;
+        // $course->content = $request->content;
+        // $course->price   = $request->price;
+        // $course->hours   = $request->hours;
+        // $course->save();
 
         //2. Using Model Method
         // Course::create([
@@ -85,9 +87,17 @@ class CourseController extends Controller
         //     'hours' => $request->hours,
 
         // ]);
+        $data = $request->except('_token');
+        $data['image'] = $img_name;
+        Course::create($data);
 
-        //4. redirect to another route  
-        return redirect()->route('courses.index');
+
+
+        //4. redirect to another route
+        return redirect()
+            ->route('courses.index')
+            ->with('msg', 'Course Create Successfully!')
+            ->with('type', 'success');
     }
 
     /**
@@ -101,9 +111,15 @@ class CourseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        //    $course = Course::find($id);
+        //    if(!$course){
+        //     abort(404);
+        //    }
+
+        $course = Course::findOrFail($id);
+        return view('courses.edit', compact('course'));
     }
 
     /**
@@ -111,7 +127,37 @@ class CourseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        //1. validation
+        $request->validate([
+            'name' => 'required',
+            'image' => 'nullable|image|mimes:png,jpg,jpeg',
+            'content' => 'required',
+            'price' => 'required|numeric',
+            'hours' => 'required|numeric',
+        ]);
+
+        $course = Course::findOrFail($id);
+
+        //3. store in data base
+        $data = $request->except('_token');
+
+        if ($request->hasFile('image')) {
+            File::delete(public_path('images/'.$course->image));
+            //2. upload files
+            $img_name = time() . rand() . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('images'), $img_name);
+            $data['image'] = $img_name;
+        }
+
+        $course->update($data);
+
+
+
+        //4. redirect to another route
+        return redirect()
+            ->route('courses.index')
+            ->with('msg', 'Course Updated Successfully!')
+            ->with('type', 'success');
     }
 
     /**
@@ -120,7 +166,11 @@ class CourseController extends Controller
     public function destroy($id)
     {
         Course::destroy($id);
-        return redirect()->route('courses.index');
+
+        return redirect()
+            ->route('courses.index')
+            ->with('msg', 'Course Archived!')
+            ->with('type', 'danger');
     }
 
     function trash()
@@ -136,14 +186,23 @@ class CourseController extends Controller
         $course = Course::onlyTrashed()->find($id)->restore();
 
         // return redirect()->back();
-        return redirect()->route('courses.index');
+
+        return redirect()
+            ->route('courses.index')
+            ->with('msg', 'Restored Successfully!')
+            ->with('type', 'success');
     }
 
     function forcedelete($id)
     {
-        $course = Course::onlyTrashed()->find($id)->forcedelete();
+        $course = Course::onlyTrashed()->find($id);
+        File::delete(public_path('images/'.$course->image));
+        $course->forcedelete();
 
         // return redirect()->back();
-        return redirect()->route('courses.index');
+        return redirect()
+            ->route('courses.index')
+            ->with('msg', 'Deleted for ever!')
+            ->with('type', 'danger');
     }
 }
