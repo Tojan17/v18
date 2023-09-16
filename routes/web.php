@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\RelationController;
 
 Route::prefix('/blog')->name('blog.')->group(function () {
     Route::get('/', [BlogController::class, 'index'])->name('index');
@@ -68,6 +69,8 @@ Route::delete('/courses/{course}/forcedelete', [CourseController::class, 'forced
 
 Route::resource('courses', CourseController::class);
 
-
+//Relations Route
+Route::get('users', [RelationController::class, 'users'])->name('relation.users');
+Route::get('profile/{id}', [RelationController::class, 'profile'])->name('relation.profile');
 
 //
